@@ -14,6 +14,7 @@ const SynopsisEvaluation = require("../models/synopsisEvaluation");
 const EvaluationStatus = require("../models/evaluationStatus");
 const synopsisSchedule = require("../models/synopsisSchedule");
 const synopsisEvaluation = require("../models/synopsisEvaluation");
+const synopsisSubmission = require("../models/synopsisSubmission");
 
 var storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -381,7 +382,7 @@ router.get("/submitted-synopsis", auth.verifyUser, (req, res) => {
         path: "program_id session_id supervisor_id coSupervisor_id",
       },
     })
-    .populate("supervisor_id coSupervisor_id")
+    .populate("supervisor_id coSupervisor_id student_id")
     .then((synopsisSubmission) => {
       console.log("submitted", synopsisSubmission);
       res.setHeader("Content-Type", "application/json");
@@ -610,6 +611,11 @@ router.get(
 
   router.get('/student-synopsis-submission/:id',auth.verifyUser,async (req,res) => {
     try{
+      var msg;
+      var sub
+      await synopsisSubmission.findOne({student_id:req.params.id}).then((re)=>{
+        sub=re;
+       })
       console.log("yolo",req.params.id)
       synopsisEvaluation.aggregate([{
         $lookup:{
@@ -619,10 +625,22 @@ router.get(
             as:'Schedule'
         }
     }]).exec(function(err,ress){
-//console.log("hello",ress)
+console.log("hello",ress)
       var a=ress.find(item=>item.Schedule[0].student_id==req.params.id)
       //const a=ress.find(item=>item.Schedule.student_id==req.params.id)
-      res.json({ 'message':"Status update!", 'data': a })
+      console.log("hello",a)
+      if(a==undefined){
+        console.log("gekksd")
+        a=sub
+        msg="submitted"
+
+      }
+      else{
+        msg="evaluated"
+      }
+      console.log("hello",a)
+
+      res.json({ 'message':msg, 'data': a })
     }).catch((err)=>{
 
       })
