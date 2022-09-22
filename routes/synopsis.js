@@ -626,7 +626,7 @@ router.get(
         }
     }]).exec(function(err,ress){
 console.log("hello",ress)
-      var a=ress.find(item=>item.Schedule[0].student_id==req.params.id)
+      var a=ress.find(item=>item.Schedule[0]?.student_id==req.params.id)
       //const a=ress.find(item=>item.Schedule.student_id==req.params.id)
       console.log("hello",a)
       if(a==undefined){
