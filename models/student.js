@@ -42,7 +42,7 @@ const studentSchema = new Schema({
       GPA: { type: String },
       Rank:{type:String},
       Instructor:{type:String},
-      absent:{type:Boolean}
+      absent:{type:Boolean,default:false}
       }]
 }]
 });

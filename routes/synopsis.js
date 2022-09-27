@@ -374,20 +374,29 @@ router.post(
 );
 //get synopsisSubmissions
 
-router.get("/submitted-synopsis", auth.verifyUser, (req, res) => {
-  SynopsisSubmission.find({})
+router.get("/submitted-synopsis", auth.verifyUser, async(req, res) => {
+  var array;
+
+  await SynopsisSubmission.find({})
+    
+    .populate("supervisor_id coSupervisor_id student_id")
     .populate({
       path: "student_id",
-      populate: {
-        path: "program_id session_id supervisor_id coSupervisor_id",
-      },
+     
+          populate: {
+            path: "program_id",
+          },
+       
+      
     })
-    .populate("supervisor_id coSupervisor_id student_id")
     .then((synopsisSubmission) => {
       console.log("submitted", synopsisSubmission);
+      
+      console.log("shgyehg",synopsisSubmission)
       res.setHeader("Content-Type", "application/json");
       res.status(200).json(synopsisSubmission);
     })
+    
     .catch((err) => {
       res.setHeader("Content-Type", "application/json");
       res.status(500).json({ success: false, message: err.message });
