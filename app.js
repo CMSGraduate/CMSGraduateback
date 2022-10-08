@@ -15,6 +15,7 @@ const authRouter = require("./routes/auth");
 const notification = require("./routes/notifications");
 const announcement = require("./routes/announcements");
 const course = require("./routes/course");
+const notifications = require("./routes/studentnotifications");
 
 var passport = require("passport");
 const path = require("path");
@@ -26,8 +27,9 @@ const app = express();
 require("dotenv").config();
 app.use(logger("dev"));
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+
+app.use(express.json({limit: '50mb'}));
+app.use(express.urlencoded({limit: '50mb', extended: false }));
 app.use(cors());
 
 connection(); //establishing database connection
@@ -74,6 +76,8 @@ app.use("/thesis", thesisRouter);
 app.use("/pdfReports", pdfReportsRouter);
 app.use("/progress-report", progressReportsRouter);
 app.use("/Notification", notification);
+app.use("/Notifications", notifications);
+
 app.use("/announcements", announcement);
 app.use("/courses", course);
 
