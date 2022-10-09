@@ -56,8 +56,6 @@ router.post("/signup", async (req, res, next) => {
                   res.statusCode = 200;
                   res.setHeader("Content-Type", "application/json");
                  signupMail(user.email,req.body.password);
-                 resetPasswordMail(user.email);
-
                   res.json({
                     success: true,
                     status: "Registration Successful!",
