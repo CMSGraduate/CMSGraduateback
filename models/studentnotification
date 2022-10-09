@@ -6,6 +6,7 @@ const studentnotificationSchema = new Schema({
   createdBy: { type: mongoose.Types.ObjectId, ref: "User" },
   creationDate: { type: String, required: true },
   notificationtitle: { type: String, required: true },
+  notificationDate:{type: String, required: true },
   isRead: { type: Boolean },
 });
 module.exports = mongoose.model("StudentNotification", studentnotificationSchema);

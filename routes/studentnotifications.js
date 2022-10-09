@@ -10,7 +10,7 @@ router.post("/send-to-/", auth.verifyUser, async (req, res) => {
   const Today = new Date();
   const year = Today.getFullYear();
   const month = Today.getMonth() + 1;
-  const day = Today.getDay();
+  const day = Today.getDay()+1;
   const date = day + "-" + month + "-" + year;
   console.log("hello",req.body)
   try {
@@ -18,8 +18,9 @@ router.post("/send-to-/", auth.verifyUser, async (req, res) => {
     const obj = {
       notification: req.body.notification,
       notificationtitle:req.body.title,
-      createdBy: req.user._id,
+      createdBy: req.user.student_id,
       creationDate: date,
+      notificationDate:req.body.notificationDate,
       isRead: false,
     };
     const notifi = await Notification.create(obj);
@@ -107,7 +108,8 @@ router.get("/getNotification/", auth.verifyUser, async (req, res) => {
 
 router.get("/getAllNotification/", auth.verifyUser, async (req, res) => {
   try {
-    const notifi = await notification.find({})
+    const notifi = await Notification.find({})
+    console.log("notifi",notifi)
     res.status(200).json(notifi);
   }
    catch (err) {

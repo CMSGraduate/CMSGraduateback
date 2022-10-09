@@ -132,6 +132,15 @@ router.get("/getNotification/", auth.verifyUser, async (req, res) => {
   }
 });
 
+router.get("/getNotifications/", auth.verifyUser, async (req, res) => {
+  try {
+    console.log("re,",req.user)
+    const notifi = await notification.find({ sentTo: req.user.student_id });
+    res.status(200).json(notifi);
+  } catch (err) {
+    console.log(err);
+  }
+});
 router.get("/getAllNotification/", auth.verifyUser, async (req, res) => {
   try {
     const notifi = await notification.find({}).populate({

@@ -175,7 +175,6 @@ router.delete(
 router.patch("/", auth.verifyUser, auth.checkStudent, async (req, res) => {
   uploadProfile(req, res, async function (err) {
     const body = req.body;
-
     if (err instanceof multer.MulterError) {
       console.log("mul", err);
 
@@ -187,16 +186,19 @@ router.patch("/", auth.verifyUser, auth.checkStudent, async (req, res) => {
 
       return res.status(500).json({ success: false, message: err });
     } else {
-      console.log("Req", req);
+      console.log("Req",body.name);
       let needs = await helpers.studentUpdateNeeds(req);
+      console.log("hello",needs)
       await User.findOneAndUpdate(
         { _id: req.user._id },
         { $set: { username: body.name } }
       )
         .then(async () => {
+          console.log("helllo")
           if (needs.programShortName.toLowerCase().includes("ms")) {
+            console.log("i am in",body)
             await Student.findOneAndUpdate(
-              { _id: needs.student_id },
+              {_id:needs.student_id._id} ,
               {
                 $set: {
                   username: body.name,
@@ -204,15 +206,15 @@ router.patch("/", auth.verifyUser, auth.checkStudent, async (req, res) => {
                   mobile: body.mobile,
                   supervisor_id: body.supervisor,
                   coSupervisor_id: body.coSupervisor,
-                  synopsisTitle: body.synopsisTitle,
+                  program_id:body.program,
                   thesisRegistration: body.thesisRegistration,
                   thesisTrack: body.thesisTrack,
                   profilePicture: `public/uploads/${req.file.filename}`,
                 },
               },
-              { upsert: true }
             )
               .then((faculty) => {
+                console.log("res",faculty)
                 res.setHeader("Content-Type", "application/json");
                 res
                   .status(200)
@@ -224,7 +226,7 @@ router.patch("/", auth.verifyUser, auth.checkStudent, async (req, res) => {
               });
           } else {
             await Student.findOneAndUpdate(
-              { _id: needs.student_id },
+              { _id: needs.student_id._id },
               {
                 $set: {
                   username: body.name,
@@ -235,8 +237,8 @@ router.patch("/", auth.verifyUser, auth.checkStudent, async (req, res) => {
                   synopsisTitle: body.synopsisTitle,
                   thesisRegistration: body.thesisRegistration,
                   thesisTrack: body.thesisTrack,
-                  totalPublications: body.totalPublications,
-                  impactFactorPublications: body.impactFactorPublications,
+                  //totalPublications: body.totalPublications,
+                  //impactFactorPublications: body.impactFactorPublications,
                   profilePicture: `public/uploads/${req.file.filename}`,
                 },
               },

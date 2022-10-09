@@ -11,6 +11,7 @@ const thesisSubmissionSchema = new Schema({
   thesisStatus: { type: String },
   synopsisNotification: { type: String /* required: true */ },
   thesisFileName: { type: String /* required: true */ },
+  thesisFile:{type:String},
   plagiarismReport: { type: String /* required: true */ },
   SpecilizationTrack: { type: String /*required: true */ },
   externalExaminer: { type: String /* required: true */ },

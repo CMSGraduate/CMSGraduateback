@@ -9,6 +9,40 @@ const Notification = require("../models/notification");
 const Announcement = require("../models/announcement");
 const Session = require("../models/session");
 
+const date=new Date(Date.now())
+const year=date.getFullYear()+"";
+const datee=date.getDate()
+const month=date.getMonth()+1
+const fulldate=datee+"-"+month+"-"+year
+if(month==2 && datee==1){
+  var title="SP"+year[2]+year[3]
+  var description="SPRING "+year+" SESSION"
+  
+  Session.create({title:title,description:description,creationDate:date})
+    .then((session) => {
+      res.setHeader("Content-Type", "application/json");
+      res.status(200).json(session);
+    })
+    .catch((err) => {
+      res.setHeader("Content-Type", "application/json");
+      res.status(500).json({ success: false, message: err.message });
+    });
+}
+else if(month==9 && datee==1){
+  var title="FA"+year[2]+year[3]
+  var description="FALL "+year+" SESSION"
+  
+  Session.create({title:title,description:description,creationDate:date})
+    .then((session) => {
+      res.setHeader("Content-Type", "application/json");
+      res.status(200).json(session);
+    })
+    .catch((err) => {
+      res.setHeader("Content-Type", "application/json");
+      res.status(500).json({ success: false, message: err.message });
+    });
+}
+
 router.get("/", auth.verifyUser, (req, res) => {
   Session.find({})
     .then((session) => {

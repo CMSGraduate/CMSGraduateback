@@ -14,7 +14,7 @@ const randToken = require("rand-token");
 
 router.post("/signup", async (req, res, next) => {
   const user = req.body;
-  console.log(user);
+  console.log("absb",resetPasswordMail);
   if (user.userRole === "STUDENT") {
     // let needs = await helpers.studentSignUpNeeds(user);
     let exists = await Student.findOne({ registrationNo: user.registrationNo });
@@ -31,8 +31,7 @@ router.post("/signup", async (req, res, next) => {
       const newSession = await Session.findOne({ title: studentSession });
       Student.create({
         ...user,
-
-        session_id: newSession._id,
+        session_id: newSession?._id,
       })
         /* supervisor_id: needs.supervisor._id,
         coSupervisor_id: needs.coSupervisor._id, */
@@ -56,7 +55,9 @@ router.post("/signup", async (req, res, next) => {
                 passport.authenticate("local")(req, res, () => {
                   res.statusCode = 200;
                   res.setHeader("Content-Type", "application/json");
-                  // signupMail(user.email);
+                 signupMail(user.email,req.body.password);
+                 resetPasswordMail(user.email);
+
                   res.json({
                     success: true,
                     status: "Registration Successful!",
@@ -104,6 +105,7 @@ router.post("/signup", async (req, res, next) => {
                   res.statusCode = 200;
                   res.setHeader("Content-Type", "application/json");
                   console.log("faculty role" + user.userRole);
+                  signupMail(user.email,req.body.password);
 
                   res.json({
                     success: true,

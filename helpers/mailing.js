@@ -2,24 +2,28 @@ const nodemailer = require("nodemailer");
 require("dotenv").config();
 
 var transporter = nodemailer.createTransport({
-  service: "gmail",
+  host: 'smtp.gmail.com',
+  port: 465,
+  secure: true,
   auth: {
-    user: "tuseeqtoor9@gmail.com",
-    pass: "forgoti@G!",
-  },
+    user: "sabahatsyed2000@gmail.com",
+    pass: "suikdcobytlajaio",
+  },tls: {
+    rejectUnauthorized: false
+  }
 });
 
-module.exports = signupMail = (email) => {
+module.exports = signupMail = (email,password) => {
   var mailOptions = {
-    from: "tuseeqtoor9@gmail.com",
+    from: "sabahatsyed2000@gmail.com",
     to: email,
     subject: "Signup Successful",
-    text: "That was easy!",
+    text: "your account password is "+password,
   };
 
   transporter.sendMail(mailOptions, function (error, info) {
     if (error) {
-      console.log(error);
+      console.log("sdada",error);
     } else {
       console.log("Email sent: " + info.response);
     }
@@ -27,9 +31,9 @@ module.exports = signupMail = (email) => {
 };
 module.exports = reportMail = (email, path) => {
   var mailOptions = {
-    from: "tuseeqtoor9@gmail.com",
+    from: "sabahatsyed2000@gmail.com",
     to: email,
-    subject: "Signup Successful",
+    subject: "Report Email",
     attachment: path,
   };
 
@@ -44,7 +48,7 @@ module.exports = reportMail = (email, path) => {
 
 module.exports = resetPasswordMail = (email, token) => {
   var mailOptions = {
-    from: "tuseeqtoor9@gmail.com",
+    from: "sabahatsyed2000@gmail.com",
     to: email,
     subject: "Reset Password",
     html: `<p>You requested for reset password, kindly use this <a href="${process.env.REACT_APP_URL}/ResetPassword/${token}">link</a> to reset your password</p>`,

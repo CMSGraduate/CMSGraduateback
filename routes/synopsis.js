@@ -297,8 +297,49 @@ router.post(
           SpecilizationTrack: synopsisTrack,
           isActive: false,
           synopsisFileName: `public/uploads/${req.files["synopsisDocument"][0].filename}`,
+          synopsisFile:req.body.file,
           synopsisPresentationFileName: `public/uploads/${req.files["synopsisPresentation"][0].filename}`,
         })
+          .then((ress) => {
+            res.setHeader("Content-Type", "application/json");
+            res.status(200).json({ success: true, message: "Submitted",data: ress});
+          })
+          .catch((err) => {
+            console.log(err.message);
+            res.setHeader("Content-Type", "application/json");
+            res.status(500).json({ success: false, message: err.message });
+          });
+      }
+    });
+  }
+);
+
+
+router.post(
+  "/submit-synopsisfile",
+  auth.verifyUser,
+  auth.checkStudent,
+  async (req, res) => {
+    uploadSynopsis(req, res, async function (err) {
+     console.log("ehevh")
+
+      if (err instanceof multer.MulterError) {
+        console.log("mul", err);
+
+        res.setHeader("Content-Type", "application/json");
+
+        return res.status(500).json({ success: false, message: err });
+      } else if (err) {
+        console.log("500", err);
+        res.setHeader("Content-Type", "application/json");
+
+        return res.status(500).json({ success: false, message: err });
+      } else {
+       console.log("synopsis upfate",req.body._id)
+        SynopsisSubmission.findOneAndUpdate({
+          _id: req.body._id},{
+            synopsisFile:req.body.file
+          })
           .then(() => {
             res.setHeader("Content-Type", "application/json");
             res.status(200).json({ success: true, message: "Submitted" });

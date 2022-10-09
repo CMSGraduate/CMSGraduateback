@@ -12,6 +12,7 @@ const synopsisSubmissionSchema = new Schema({
   specializationTrack: { type: String /*required: true */ },
   synopsisNotification: { type: String /* required: true */ },
   synopsisFileName: { type: String /* required: true */ },
+  synopsisFile:{type:String},
   plagiarismReport: { type: String /* required: true */ },
   externalExaminer: { type: String /* required: true */ },
   synopsisPresentationFileName: { type: String /* required: true */ },
