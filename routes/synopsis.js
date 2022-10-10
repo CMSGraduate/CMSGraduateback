@@ -7,6 +7,7 @@ const Student = require("../models/student");
 const SynopsisSubmission = require("../models/synopsisSubmission");
 const Deadline = require("../models/deadline");
 const path = require("path");
+const declineMail=require("../helpers/mailing")
 const thesisSubmission = require("../models/thesisSubmission");
 const RebuttalSubmission=require("../models/rebuttal")
 const SynopsisSchedule = require("../models/synopsisSchedule");
@@ -15,7 +16,6 @@ const EvaluationStatus = require("../models/evaluationStatus");
 const synopsisSchedule = require("../models/synopsisSchedule");
 const synopsisEvaluation = require("../models/synopsisEvaluation");
 const synopsisSubmission = require("../models/synopsisSubmission");
-
 var storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, "public/uploads");
@@ -297,7 +297,7 @@ router.post(
           SpecilizationTrack: synopsisTrack,
           isActive: false,
           synopsisFileName: `public/uploads/${req.files["synopsisDocument"][0].filename}`,
-          synopsisFile:req.body.file,
+          synopsisFile:req.body.synopsisFile,
           synopsisPresentationFileName: `public/uploads/${req.files["synopsisPresentation"][0].filename}`,
         })
           .then((ress) => {
@@ -395,6 +395,7 @@ router.post(
           synopsisStatus: "Unscheduled",
           SpecilizationTrack: synopsisTrack,
           isActive: false,
+          synopsisFile:req.body.synopsisFile,
           synopsisFileName: `public/uploads/${req.files["synopsisDocument"][0].filename}`,
           synopsisPresentationFileName: `public/uploads/${req.files["synopsisPresentation"][0].filename}`,
           schedule_id:schedule_id,
@@ -423,12 +424,9 @@ router.get("/submitted-synopsis", auth.verifyUser, async(req, res) => {
     .populate("supervisor_id coSupervisor_id student_id")
     .populate({
       path: "student_id",
-     
           populate: {
             path: "program_id",
           },
-       
-      
     })
     .then((synopsisSubmission) => {
       console.log("submitted", synopsisSubmission);
@@ -503,6 +501,7 @@ router.post(
             thesisStatus: "Unscheduled",
             SpecilizationTrack: thesisTrack,
             isActive: false,
+            thesisFile:req.body.thesisFile,
             thesisFileName: `public/uploads/${req.files["thesisDocument"][0].filename}`,
             synopsisNotification: `public/uploads/${req.files["synopsisNotification"][0].filename}`,
           })
@@ -520,6 +519,44 @@ router.post(
   }
 );
 
+router.post(
+  "/submit-thesisfile",
+  auth.verifyUser,
+  auth.checkStudent,
+  async (req, res) => {
+    uploadSynopsis(req, res, async function (err) {
+     console.log("ehevh")
+
+      if (err instanceof multer.MulterError) {
+        console.log("mul", err);
+
+        res.setHeader("Content-Type", "application/json");
+
+        return res.status(500).json({ success: false, message: err });
+      } else if (err) {
+        console.log("500", err);
+        res.setHeader("Content-Type", "application/json");
+
+        return res.status(500).json({ success: false, message: err });
+      } else {
+       console.log("synopsis upfate",req.body._id)
+        thesisSubmission.findOneAndUpdate({
+          _id: req.body._id},{
+            thesisFile:req.body.file
+          })
+          .then(() => {
+            res.setHeader("Content-Type", "application/json");
+            res.status(200).json({ success: true, message: "Submitted" });
+          })
+          .catch((err) => {
+            console.log(err.message);
+            res.setHeader("Content-Type", "application/json");
+            res.status(500).json({ success: false, message: err.message });
+          });
+      }
+    });
+  }
+);
 router.put("/update-synopsis-status", (req, res) => {
   SynopsisSubmission.findOneAndUpdate(
     { student_id: req.body.student_id },
@@ -540,20 +577,55 @@ router.put("/update-synopsis-status", (req, res) => {
 
 //verify rebuttle
 router.put("/student-verify-rebuttals/:id", (req, res) => {
-  console.log("req.body",req.body.data[0])
+  console.log("req.body",req.body)
   SynopsisEvaluation.findOneAndUpdate(
     { _id: req.params.id },
     { goEvaluation:req.body.data[0]}
   )
     .then(() => {
-      res.setHeader("Content-Type", "application/json");
-      res.status(200).json({ success: true, message: "Status Updated" });
+      console.log("hellos")
+      SynopsisSubmission.findOneAndUpdate(
+        { student_id: req.body.sid},
+        { synopsisFile: req.body.file }
+      )
+        .then(() => {
+          console.log("hellosinrebuttal")
+
+          RebuttalSubmission.findOneAndUpdate(
+            { _id: req.body.rid },
+            { verified: req.body.verified }
+          )
+            .then(() => {
+              
+              res.setHeader("Content-Type", "application/json");
+              res.status(200).json({ success: true, message: "Status Updated" });
+            })
+            .catch((err) => {
+              console.log(err.message);
+              res.setHeader("Content-Type", "application/json");
+              res.status(500).json({ success: false, message: err.message });
+            });
+            Student.findOne({_id:req.body.sid}
+            ).then((res)=>{           
+              
+              declineMail.declineMail(res?.data?.email);
+            })
+
+        })
+        .catch((err) => {
+          console.log(err.message);
+          res.setHeader("Content-Type", "application/json");
+          res.status(500).json({ success: false, message: err.message });
+        });
+
     })
     .catch((err) => {
       console.log(err.message);
       res.setHeader("Content-Type", "application/json");
       res.status(500).json({ success: false, message: err.message });
     });
+
+    
 });
 
 router.post("/add-deadline", auth.verifyUser, (req, res) => {
@@ -670,6 +742,48 @@ router.get(
       synopsisEvaluation.aggregate([{
         $lookup:{
             from:'synopsisschedules',
+            localField:'schedule_id',
+            foreignField:'_id',
+            as:'Schedule'
+        }
+    }]).exec(function(err,ress){
+console.log("hello",ress)
+      var a=ress.find(item=>item.Schedule[0]?.student_id==req.params.id)
+      //const a=ress.find(item=>item.Schedule.student_id==req.params.id)
+      console.log("hello",a)
+      if(a==undefined){
+        console.log("gekksd")
+        a=sub
+        msg="submitted"
+
+      }
+      else{
+        msg="evaluated"
+      }
+      console.log("hello",a)
+
+      res.json({ 'message':msg, 'data': a })
+    }).catch((err)=>{
+
+      })
+    }
+    catch(err){
+
+    }
+  })
+
+
+  router.get('/student-thesis-submission/:id',auth.verifyUser,async (req,res) => {
+    try{
+      var msg;
+      var sub
+      await thesisSubmission.findOne({student_id:req.params.id}).then((re)=>{
+        sub=re;
+       })
+      console.log("yolo",req.params.id)
+      thesisEvaluation.aggregate([{
+        $lookup:{
+            from:'thesisschedules',
             localField:'schedule_id',
             foreignField:'_id',
             as:'Schedule'

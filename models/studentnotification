@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 const studentnotificationSchema = new Schema({
   notification: { type: String, required: true },
-  createdBy: { type: mongoose.Types.ObjectId, ref: "User" },
+  createdBy: { type: mongoose.Types.ObjectId, ref: "Student" },
   creationDate: { type: String, required: true },
   notificationtitle: { type: String, required: true },
   notificationDate:{type: String, required: true },

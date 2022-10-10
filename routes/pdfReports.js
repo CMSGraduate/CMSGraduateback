@@ -91,7 +91,7 @@ router.post(
       .create(document, options)
       .then((response) => {
         console.log(response);
-        reportMail(
+        reportMail.reportMail(
           req.params.supervisoremail,
           path.join(
             __dirname,

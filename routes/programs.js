@@ -33,8 +33,6 @@ router.post("/add-Program", auth.verifyUser, auth.checkAdmin, (req, res) => {
 
 router.get(
   "/getprogram",
-  auth.verifyUser,
-  auth.checkAdmin,
   async (req, res, next) => {
     try {
       const programe = await Program.find({});

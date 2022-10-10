@@ -55,7 +55,7 @@ router.post("/signup", async (req, res, next) => {
                 passport.authenticate("local")(req, res, () => {
                   res.statusCode = 200;
                   res.setHeader("Content-Type", "application/json");
-                 signupMail(user.email,req.body.password);
+                 signupMail.signupMail(user.email,req.body.password);
                   res.json({
                     success: true,
                     status: "Registration Successful!",
@@ -197,7 +197,7 @@ router.post("/forgot-password", (req, res) => {
     .then(async (user) => {
       const token = randToken.generate(16);
       await Token.create({ token: token, email: user.email });
-      resetPasswordMail(user.email, token);
+      resetPasswordMail.resetPasswordMail(user.email, token);
       res.setHeader("Content-Type", "application/json");
       res.status(200).json({
         success: true,

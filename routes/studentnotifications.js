@@ -108,9 +108,15 @@ router.get("/getNotification/", auth.verifyUser, async (req, res) => {
 
 router.get("/getAllNotification/", auth.verifyUser, async (req, res) => {
   try {
-    const notifi = await Notification.find({})
-    console.log("notifi",notifi)
-    res.status(200).json(notifi);
+    await Notification.find({}).populate('createdBy')
+    .then((notifi)=>{
+      console.log("notifi",notifi)
+      res.status(200).json(notifi);
+    }).catch((err)=>{
+      console.log(err);
+
+    })
+    
   }
    catch (err) {
     console.log(err);

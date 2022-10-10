@@ -15,12 +15,14 @@ const synopsisrebuttal = new Schema({
     plagiarismReport: { type: String /* required: true */ },
     externalExaminer: { type: String /* required: true */ },
     synopsisPresentationFileName: { type: String /* required: true */ },
+    synopsisFile:{type:String},
     creationDate: { type: Date, default: Date.now /* required: true */ },
     isActive: { type: Boolean, default: true /* required: true */ },
     ipAddress: { type: String /* required: true */ },
     status: { type: Boolean,default:false /* required: true */ },
     schedule_id:{type:mongoose.Types.ObjectId,ref:"SynopsisSchedule"},
-    evaluation_id:{type:mongoose.Types.ObjectId,ref:"SynopsisEvaluation"}
+    evaluation_id:{type:mongoose.Types.ObjectId,ref:"SynopsisEvaluation"},
+    verified:{type:Boolean,default:false}
 });
 
 module.exports = mongoose.model("SynopsisRebuttal", synopsisrebuttal);

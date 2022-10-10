@@ -13,7 +13,7 @@ var transporter = nodemailer.createTransport({
   }
 });
 
-module.exports = signupMail = (email,password) => {
+module.exports.signupMail = (email,password) => {
   var mailOptions = {
     from: "sabahatsyed2000@gmail.com",
     to: email,
@@ -29,7 +29,7 @@ module.exports = signupMail = (email,password) => {
     }
   });
 };
-module.exports = reportMail = (email, path) => {
+module.exports.reportMail = (email, path) => {
   var mailOptions = {
     from: "sabahatsyed2000@gmail.com",
     to: email,
@@ -46,7 +46,25 @@ module.exports = reportMail = (email, path) => {
   });
 };
 
-module.exports = resetPasswordMail = (email, token) => {
+module.exports.declineMail = (email) => {
+  var mailOptions = {
+    from: "sabahatsyed2000@gmail.com",
+    to: email,
+    subject: "Declined Rebuttle Email",
+    text:"Your Rebuttle has been Declined by the Supervisor. Contact Office for further details",
+  };
+
+  transporter.sendMail(mailOptions, function (error, info) {
+    if (error) {
+      console.log(error);
+    } else {
+      console.log("Email sent: " + info.response);
+    }
+  });
+};
+
+
+module.exports.resetPasswordMail = (email, token) => {
   var mailOptions = {
     from: "sabahatsyed2000@gmail.com",
     to: email,
