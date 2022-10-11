@@ -98,7 +98,7 @@ router.post(
             `../public/pdfReports/${req.params.registrationNo}_Synopsis.pdf`
           )
         );
-        reportMail(
+        reportMail.reportMail(
           req.params.studentemail,
           path.join(
             __dirname,

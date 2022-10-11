@@ -346,9 +346,10 @@ res.status(200).json({ success: true, res:response.verified });
 }
 });
 
-router.put("/Result/:id", auth.verifyUser, auth.checkStudent, (req, res) => {
+router.put("/Result/:id", auth.verifyUser, (req, res) => {
 
   var result;
+  console.log("dshsg",req.body)
   Student.findOne({_id:req.params.id}).then(ress=>{
      console.log("rews",req.body)
      result=ress.Result

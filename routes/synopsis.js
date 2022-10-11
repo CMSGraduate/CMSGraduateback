@@ -596,7 +596,11 @@ router.put("/student-verify-rebuttals/:id", (req, res) => {
             { verified: req.body.verified }
           )
             .then(() => {
-              
+              Student.findOne({_id:req.body.sid}
+                ).then((rese)=>{           
+                  console.log("dss",rese)
+                  declineMail.declineMail(rese?.email);
+                })
               res.setHeader("Content-Type", "application/json");
               res.status(200).json({ success: true, message: "Status Updated" });
             })
@@ -605,11 +609,7 @@ router.put("/student-verify-rebuttals/:id", (req, res) => {
               res.setHeader("Content-Type", "application/json");
               res.status(500).json({ success: false, message: err.message });
             });
-            Student.findOne({_id:req.body.sid}
-            ).then((res)=>{           
-              
-              declineMail.declineMail(res?.data?.email);
-            })
+            
 
         })
         .catch((err) => {
