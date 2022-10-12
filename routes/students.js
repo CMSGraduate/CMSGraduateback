@@ -264,6 +264,41 @@ router.patch("/", auth.verifyUser, auth.checkStudent, async (req, res) => {
   });
 });
 
+router.patch("/update-sup", auth.verifyUser, auth.checkStudent, async (req, res) => {
+  uploadProfile(req, res, async function (err) {
+    const body = req.body;
+   
+      console.log("Req",body.name);
+      console.log("hello",req.user)
+            await Student.findOneAndUpdate(
+              {_id:body._id} ,
+              {
+                $set: {
+                  supervisor_id: body.supervisor,
+                  coSupervisor_id: body.coSupervisor,
+                },
+              },
+            )
+              .then((faculty) => {
+                console.log("res",faculty)
+                res.setHeader("Content-Type", "application/json");
+                res
+                  .status(200)
+                  .json({ beforeUpdate: faculty, afterUpdate: body });
+              })
+              .catch((err) => {
+                res.setHeader("Content-Type", "application/json");
+                res.status(500).json({ success: false, message: err.message });
+              });
+           
+        })
+        .catch((err) => {
+          res.setHeader("Content-Type", "application/json");
+          res.status(500).json({ success: false, message: err.message });
+        });
+   
+});
+
 //view notifications
 router.get("/notifications", auth.verifyUser, auth.checkStudent, (req, res) => {
   Notification.find({ sentTo: req.user._id })
