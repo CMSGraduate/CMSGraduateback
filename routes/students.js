@@ -265,13 +265,12 @@ router.patch("/", auth.verifyUser, auth.checkStudent, async (req, res) => {
 });
 
 router.patch("/update-sup", auth.verifyUser, auth.checkStudent, async (req, res) => {
-  uploadProfile(req, res, async function (err) {
     const body = req.body;
    
-      console.log("Req",body.name);
+      console.log("Req",body);
       console.log("hello",req.user)
             await Student.findOneAndUpdate(
-              {_id:body._id} ,
+              {_id:req.user.student_id} ,
               {
                 $set: {
                   supervisor_id: body.supervisor,
@@ -290,12 +289,7 @@ router.patch("/update-sup", auth.verifyUser, auth.checkStudent, async (req, res)
                 res.setHeader("Content-Type", "application/json");
                 res.status(500).json({ success: false, message: err.message });
               });
-           
-        })
-        .catch((err) => {
-          res.setHeader("Content-Type", "application/json");
-          res.status(500).json({ success: false, message: err.message });
-        });
+      
    
 });
 

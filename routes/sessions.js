@@ -43,7 +43,7 @@ else if(month==9 && datee==1){
     });
 }
 
-router.get("/", auth.verifyUser, (req, res) => {
+router.get("/", (req, res) => {
   Session.find({})
     .then((session) => {
       res.setHeader("Content-Type", "application/json");

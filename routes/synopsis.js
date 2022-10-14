@@ -265,7 +265,7 @@ router.post(
         req.body;
 
       console.log(req.body);
-      console.log(req.files);
+      console.log(req.files)
       if (err instanceof multer.MulterError) {
         console.log("mul", err);
 
