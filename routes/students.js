@@ -13,6 +13,7 @@ const path = require("path");
 const thesisSubmission = require("../models/thesisSubmission");
 const session = require("../models/session");
 const { response } = require("express");
+const e = require("express");
 var storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, "public/uploads");
@@ -186,7 +187,7 @@ router.patch("/", auth.verifyUser, auth.checkStudent, async (req, res) => {
 
       return res.status(500).json({ success: false, message: err });
     } else {
-      console.log("Req",body.name);
+      console.log("Req",body.program);
       let needs = await helpers.studentUpdateNeeds(req);
       console.log("hello",needs)
       await User.findOneAndUpdate(
@@ -197,6 +198,19 @@ router.patch("/", auth.verifyUser, auth.checkStudent, async (req, res) => {
           console.log("helllo")
           if (needs.programShortName.toLowerCase().includes("ms")) {
             console.log("i am in",body)
+            console.log("proidle",body)
+            var pic="";
+            if(req.file==null){
+              pic=body.profilePic
+              console.log("hahjsd",pic)
+
+            }
+            else{
+              console.log("hd",pic)
+
+              pic=`public/uploads/${req.file.filename}`
+            }
+            console.log("hasd",pic)
             await Student.findOneAndUpdate(
               {_id:needs.student_id._id} ,
               {
@@ -204,12 +218,10 @@ router.patch("/", auth.verifyUser, auth.checkStudent, async (req, res) => {
                   username: body.name,
                   fatherName: body.fatherName,
                   mobile: body.mobile,
-                  supervisor_id: body.supervisor,
-                  coSupervisor_id: body.coSupervisor,
                   program_id:body.program,
                   thesisRegistration: body.thesisRegistration,
                   thesisTrack: body.thesisTrack,
-                  profilePicture: `public/uploads/${req.file.filename}`,
+                  profilePicture: pic,
                 },
               },
             )
@@ -221,10 +233,14 @@ router.patch("/", auth.verifyUser, auth.checkStudent, async (req, res) => {
                   .json({ beforeUpdate: faculty, afterUpdate: body });
               })
               .catch((err) => {
+                console.log("ewrwr",err)
                 res.setHeader("Content-Type", "application/json");
                 res.status(500).json({ success: false, message: err.message });
               });
           } else {
+            console.log("proidle",body)
+            console.log("proidlesdb",req.file)
+
             await Student.findOneAndUpdate(
               { _id: needs.student_id._id },
               {
@@ -232,13 +248,12 @@ router.patch("/", auth.verifyUser, auth.checkStudent, async (req, res) => {
                   username: body.name,
                   fatherName: body.fatherName,
                   mobile: body.mobile,
-                  supervisor_id: body.supervisor,
-                  coSupervisor_id: body.coSupervisor,
+                 
                   synopsisTitle: body.synopsisTitle,
                   thesisRegistration: body.thesisRegistration,
                   thesisTrack: body.thesisTrack,
-                  //totalPublications: body.totalPublications,
-                  //impactFactorPublications: body.impactFactorPublications,
+                  totalPublications: body.totalPublications,
+                  impactFactorPublications: body.impactFactorPublications,
                   profilePicture: `public/uploads/${req.file.filename}`,
                 },
               },
