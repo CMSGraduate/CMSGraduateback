@@ -41,7 +41,7 @@ router.post("/send-All/", auth.verifyUser, async (req, res) => {
     const arr = students.map(async (x) => {
       const notifi = await Notification.create({
         notification: req.body.notification,
-        sentTo: x._id,
+        sentTo: x.student_id._id,
         createdBy: req.user._id,
         creationDate: date,
         isActive: true,
