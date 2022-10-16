@@ -10,7 +10,7 @@ router.post("/send-to-/:id/", auth.verifyUser, async (req, res) => {
   const Today = new Date();
   const year = Today.getFullYear();
   const month = Today.getMonth() + 1;
-  const day = Today.getDay();
+  const day = Today.getDay()+1;
   const date = day + "-" + month + "-" + year;
   try {
     console.log(req.user);
@@ -35,7 +35,7 @@ router.post("/send-All/", auth.verifyUser, async (req, res) => {
     const Today = new Date();
     const year = Today.getFullYear();
     const month = Today.getMonth() + 1;
-    const day = Today.getDay();
+    const day = Today.getDay()+1;
     const date = day + "-" + month + "-" + year;
     const students = await User.find({ student_id: { $ne: null } });
     const arr = students.map(async (x) => {
@@ -124,7 +124,7 @@ router.get("/allStudents/", auth.verifyUser, async (req, res) => {
 
 router.get("/getNotification/", auth.verifyUser, async (req, res) => {
   try {
-    console.log("re,",req.user._id)
+    console.log("re,",req.user)
     const notifi = await notification.find({ sentTo: req.user.student_id });
     res.status(200).json(notifi);
   } catch (err) {
