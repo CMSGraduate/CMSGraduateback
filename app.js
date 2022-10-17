@@ -86,8 +86,7 @@ app.get("/", async (req, res, next) => {
   res.json({ msg: "Hello from Server" });
 });
 //Server listening
-const port = process.env.PORT || 3000;
 
-app.listen(port, () => {
+app.listen(process.env.PORT || 3000, () => {
   console.log(`Server Running on port 3000`);
 });
