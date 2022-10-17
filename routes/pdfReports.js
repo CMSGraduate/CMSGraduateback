@@ -141,7 +141,7 @@ router.post("/generate-thesis-report", (req, res, next) => {
       thesis: req.body.thesis,
       goEvaluation: goEval[0],
     },
-    path: `../Server/public/pdfReports/${req.body.thesis[0].student_id.registrationNo}_Thesis.pdf`,
+    path: `../Graduateportalbackend-main/public/pdfReports/${req.body.thesis[0].student_id.registrationNo}_Thesis.pdf`,
   };
 
   pdf
@@ -193,7 +193,7 @@ router.post(
         thesis: req.body.thesis,
         goEvaluation: goEval[0],
       },
-      path: `../Server/public/pdfReports/${req.body.thesis[0].student_id.registrationNo}_Thesis.pdf`,
+      path: `../Graduateportalbackend-main/public/pdfReports/${req.body.thesis[0].student_id.registrationNo}_Thesis.pdf`,
     };
 
     pdf
